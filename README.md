@@ -1,6 +1,6 @@
-# TimeTracker & TimeManager RESTful Web Service
+# TimeManager RESTful Web Service
 
-Dieser RESTful Web Service dient als Backend für die TimeTracker & TimeManager Anwendung. Er ermöglicht die Verwaltung von Zeiterfassungsdaten und bietet Schnittstellen für verschiedene Funktionen der Anwendung.
+Dieser RESTful Web Service dient als Backend für die TimeManager Anwendung. Er ermöglicht die Verwaltung von Zeiterfassungsdaten und bietet Schnittstellen für verschiedene Funktionen der Anwendung.
 
 ## Funktionen
 
