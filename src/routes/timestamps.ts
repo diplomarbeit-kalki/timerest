@@ -1,4 +1,5 @@
-import { getEmployees, getEmployeesById, getEmployeesByPsnr, getEmployeesByUsername, getEmployeesByFirstname, getEmployeesByLastname } from "../controllers/employees/getEmployees";
+import { getTimestamps, getTimestampsById } from "../controllers/timestamps/getTimestamps";
+import { createTimestamp } from "../controllers/timestamps/createTimestamp";
 
 //Initialisierung
 const express  = require('express');
@@ -6,13 +7,9 @@ const router = express.Router();
 console.log('Erstelle Routen: /timestamps');
 
 //GET-Routen
-router.get('/', getEmployees);
-router.get('/byid/:id', getEmployeesById);
-router.get('/byPsnr/:psnr', getEmployeesByPsnr);
-router.get('/byUsername/:username', getEmployeesByUsername);
-router.get('/byFirstname/:firstname', getEmployeesByFirstname);
-router.get('/byLastname/:lastname', getEmployeesByLastname);
+router.get('/', getTimestamps);
+router.get('/byid/:id', getTimestampsById);
 
-//router.post('/', createEmployeeController);
+router.post('/', createTimestamp);
 
 module.exports = router;
