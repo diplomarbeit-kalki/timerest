@@ -2,9 +2,14 @@ import { ObjectId } from "mongodb";
 
 export async function getEmployees(req: any, res: any) {
   try {
-    const { db } = req.app;
-
+    const { db, webSocketConnections } = req.app;
     const result = await db.collection('employees').find().toArray();
+
+    const message = "Status: KOMMT";
+    webSocketConnections.forEach((ws) => {
+      ws.send(message);
+      console.log("Message gesendet");
+    });
 
     res.status(200).json(result);
   }
