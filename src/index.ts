@@ -18,6 +18,7 @@ async function start() {
     // Routes
     app.use('/employees', require('./routes/employees'));
     app.use('/timestamps', require('./routes/timestamps'));
+    app.use('/unregisteredtags', require('./routes/unregisteredtags'));
 
     //Starte Server
     app.listen(port, () => {
