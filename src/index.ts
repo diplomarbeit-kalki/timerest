@@ -1,4 +1,3 @@
-import { MongoClient } from 'mongodb';
 import DatabaseClient from './database/client';
 import * as http from 'http';
 import * as WebSocket from 'ws';
@@ -29,7 +28,7 @@ async function start() {
 
     // Routes
     app.use('/employees', require('./routes/employees'));
-    app.use('/timestamps', require('./routes/timestamps'));
+    app.use('/timestampsperday', require('./routes/timestampsperday'));
     app.use('/users', require('./routes/users'));
     app.use('/unregisteredtags', require('./routes/unregisteredtags'));
 

@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-export async function getTimestamps(req: any, res: any) {
+export async function getTimestampsperday(req: any, res: any) {
     try {
       const { db } = req.app;
   
@@ -13,7 +13,7 @@ export async function getTimestamps(req: any, res: any) {
     }
   }
 
-  export async function getTimestampsById(req: any, res: any) {
+  export async function getTimestampsperdayById(req: any, res: any) {
     try {
       const { db } = req.app;
       const { id } = req.params;
