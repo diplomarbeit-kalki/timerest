@@ -42,12 +42,20 @@ Alle Funktionen geben einen Array mit den Ergebnisobjekten zurück.
 - **GET /employees/nextFreePsnr** Gibt die nächste freie Personalnummer zurück (Personalnummern von gelöschten Personen ausgeschlossen).
 - **GET /employees/filtered/QUERY/ITEMSPERPAGE/CURRENTPAGE** Gibt alle Employees zurück mit dem suchbegriff QUERY und einer fixen Itemanzal von ITEMSPERPAGE, wie auch der aktuellen Seite.
 
-### Timestamps
+### Timestampsperday
 
-- **GET /timestamps** Gibt alle Timestamps zurück.
-- **GET /timestamps/byId/ID** Gibt alle Timestamps mit der gesuchten ID zurück.
+- **GET /timestampsperday** Gibt alle Timestamps zurück.
+- **GET /timestampsperday/byId/ID** Gibt alle Timestamps mit der gesuchten ID zurück.
+- **POST /timestampsperday** Postet ein neuen Timestampperday mit der mitgegebenen PSNR und dem neuen Timestamp.
+  {"psnr": 1, "timestamp": "YYYY-MM-DDTHH:MM:SS.MMM+00:00"}
 
 ### UnregisteredTags
 
 - **GET /unregisteredtags** Gibt alle nicht registrierten Tags zurück.
+
+### Users
+
+- **GET /users** Gibt alle User zurück.
+- **GET /users/byId/ID** Gibt alle User mit der gesuchten ID zurück.
+- **GET /users/byUsername/USERNAME** Gibt alle User mit dem gesuchten USERNAME zurück.
 
