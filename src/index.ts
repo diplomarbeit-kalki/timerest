@@ -38,7 +38,7 @@ async function start() {
       webSocketConnections.push(ws);
 
       // Senden einer Nachricht an den Client, wenn die Verbindung hergestellt ist
-      ws.send('Server: Hallo, Client! Du bist erfolgreich verbunden.');
+      ws.send('Warte auf NFC-Tags');
 
       // Ereignishandler für eingehende Nachrichten vom Client
       ws.on('message', (message) => {
