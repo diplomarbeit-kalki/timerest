@@ -81,7 +81,9 @@ export async function postTimestampperdayWithPsnr(req: any, res: any) {
             resultacknowledged = result.acknowledged;
         }
         if (resultacknowledged) {
-            const wsmessage = `Mitarbeiter ${psnr} ${status}, Uhrzeit: ${parsedTimestamp.getHours()}:${parsedTimestamp.getMinutes()}`;
+            const hours = parsedTimestamp.getHours().toString().padStart(2, '0');
+            const minutes = parsedTimestamp.getMinutes().toString().padStart(2, '0');
+            const wsmessage = `Mitarbeiter ${psnr} ${status}, Uhrzeit: ${hours}:${minutes}`;
             webSocketConnections.forEach((ws) => {
                 ws.send(wsmessage);
                 console.log("websocket---Message gesendet");
