@@ -32,6 +32,12 @@ export async function postTimestampperdayWithPsnr(req: any, res: any) {
         var resultacknowledged = false;
         var status = "fehlgeschlagen";
 
+        const employee = await db.collection('employees').findOne(
+            {
+                psnr: parsedpsnr
+            }
+        );
+
         if (!timestampsperday) {
             console.log("POST---Timestampsperday noch nicht vorhanden")
             const result = await db.collection('timestampsperday').insertOne(
@@ -80,22 +86,20 @@ export async function postTimestampperdayWithPsnr(req: any, res: any) {
             );
             resultacknowledged = result.acknowledged;
         }
-        if (resultacknowledged) {
+        if (resultacknowledged && employee) {
+            const username = employee.username;
+            const firstname = employee.firstname;
+            const lastname = employee.lastname;
             const hours = parsedTimestamp.getHours().toString().padStart(2, '0');
             const minutes = parsedTimestamp.getMinutes().toString().padStart(2, '0');
-            const wsmessage = `Mitarbeiter ${psnr} ${status}, Uhrzeit: ${hours}:${minutes}`;
+            const seconds = parsedTimestamp.getSeconds().toString().padStart(2, '0');
+
+            console.log("Message: " + `${firstname} ${lastname} ${status}`);
             webSocketConnections.forEach((ws) => {
-                ws.send(wsmessage);
+                ws.send(`${firstname} ${lastname} ${status}`);
                 console.log("websocket---Message gesendet");
             });
-            res.status(200).json(
-                {
-                    message: 'Timestamp created',
-                    psnr: psnr,
-                    timestamp: timestamp,
-                    status: status
-                }
-            );
+            res.status(201).json(JSON.stringify(`${firstname} ${lastname} ${status}`));
         } else {
             throw new Error('Timestamp not created');
         }
