@@ -31,6 +31,7 @@ async function start() {
     app.use('/timestampsperday', require('./routes/timestampsperday'));
     app.use('/users', require('./routes/users'));
     app.use('/unregisteredtags', require('./routes/unregisteredtags'));
+    app.use('/timerecords', require('./routes/timerecords'));
 
     //Websocket
     wss.on('connection', (ws) => {
