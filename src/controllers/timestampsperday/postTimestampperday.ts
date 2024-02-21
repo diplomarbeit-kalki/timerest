@@ -26,7 +26,7 @@ export async function postTimestampperdayWithPsnr(req: any, res: any) {
         //console.log("POST---date: " + typeof date + " " + date);
 
         //Ein Dokument von der Datenbank abholen mit der psnr und dem date
-        var timestampsperday = await db.collection('timestampsperday').findOne({ emppsnr: psnr, date: date });
+        var timestampsperday = await db.collection('timestampsperday').findOne({ emppsnr: parsedpsnr, date: date });
         //console.log("POST---Timestampsperday: " + JSON.stringify(timestampsperday));
 
         var resultacknowledged = false;
@@ -42,7 +42,7 @@ export async function postTimestampperdayWithPsnr(req: any, res: any) {
             console.log("POST---Timestampsperday noch nicht vorhanden")
             const result = await db.collection('timestampsperday').insertOne(
                 {
-                    emppsnr: psnr,
+                    emppsnr: parsedpsnr,
                     date: date,
                     timestamps: [
                         {
@@ -71,7 +71,7 @@ export async function postTimestampperdayWithPsnr(req: any, res: any) {
             }
             const result = await db.collection('timestampsperday').updateOne(
                 {
-                    emppsnr: psnr,
+                    emppsnr: parsedpsnr,
                     date: date
                 },
                 {

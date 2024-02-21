@@ -35,7 +35,7 @@ async function start() {
 
     //Websocket
     wss.on('connection', (ws) => {
-      console.log('index---Client connected');
+      console.log('Websocket---Client connected');
       webSocketConnections.push(ws);
 
       // Senden einer Nachricht an den Client, wenn die Verbindung hergestellt ist
@@ -43,12 +43,12 @@ async function start() {
 
       // Ereignishandler für eingehende Nachrichten vom Client
       ws.on('message', (message) => {
-        console.log(`index---Nachricht von Client: ${message}`);
+        console.log(`Websocket---Nachricht von Client: ${message}`);
       });
 
       // Ereignishandler für das Schließen der Verbindung
       ws.on('close', () => {
-        console.log('index---Client disconnected');
+        console.log('Websocket---Client disconnected');
       });
     });
 
