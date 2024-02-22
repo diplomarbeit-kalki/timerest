@@ -1,4 +1,4 @@
-import { getTimerecords, getTimerecordById } from "../controllers/timerecords/getTimerecords";
+import { getTimerecords, getTimerecordById, getTimerecordByPsnrAndDate, getTimerecordsByPsnrAndPeriod } from "../controllers/timerecords/getTimerecords";
 import { postTimerecords } from "../controllers/timerecords/postTimerecords";
 
 //Initialisierung
@@ -8,7 +8,9 @@ console.log('Erstelle Routen: /timerecords');
 
 //GET-Routen
 router.get('/', getTimerecords);
-router.get('/byid/:id', getTimerecordById);
+router.get('/byid', getTimerecordById);
+router.get('/byPsnrAndDate', getTimerecordByPsnrAndDate);
+router.get('/byPsnrAndPeriod', getTimerecordsByPsnrAndPeriod);
 
 //POST-Routen
 router.post('/', postTimerecords);

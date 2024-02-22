@@ -15,7 +15,7 @@ export async function getUsers(req: any, res: any) {
 export async function getUsersById(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { id } = req.params;
+    const { id } = req.query;
 
     if (!id) {
       return res.status(400).json({ message: 'Id id is required' });
@@ -42,15 +42,15 @@ export async function getUsersById(req: any, res: any) {
 export async function getUserByUsername(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { username } = req.params;
+    const { username } = req.query;
 
     if (!username) {
       return res.status(400).json({ message: 'User username is required' });
     }
 
-    const result = await db.collection('users').find({
+    const result = await db.collection('users').findOne({
       username: username
-    }).toArray();;
+    });
 
     if (!result) {
       return res.status(404).json({ message: 'User not found' });

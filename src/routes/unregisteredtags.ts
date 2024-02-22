@@ -8,6 +8,4 @@ console.log('Erstelle Routen: /unregisteredtags');
 //GET-Routen
 router.get('/', getUnregisteredtags);
 
-//router.post('/', createEmployeeController);
-
 module.exports = router;

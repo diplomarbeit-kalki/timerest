@@ -15,7 +15,7 @@ export async function getEmployees(req: any, res: any) {
 export async function getEmployeesById(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { id } = req.params;
+    const { id } = req.query;
 
     if (!id) {
       return res.status(400).json({ message: 'Employee id is required' });
@@ -31,7 +31,7 @@ export async function getEmployeesById(req: any, res: any) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
-    res.status(200).json(result);
+    res.status(200).json(result[0]);
 
   }
   catch (error) {
@@ -42,7 +42,7 @@ export async function getEmployeesById(req: any, res: any) {
 export async function getEmployeesByPsnr(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { psnr } = req.params;
+    const { psnr } = req.query;
 
     if (!psnr) {
       return res.status(400).json({ message: 'Employee psnr is required' });
@@ -57,7 +57,7 @@ export async function getEmployeesByPsnr(req: any, res: any) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
-    res.status(200).json(result);
+    res.status(200).json(result[0]);
 
   }
   catch (error) {
@@ -68,7 +68,7 @@ export async function getEmployeesByPsnr(req: any, res: any) {
 export async function getEmployeesByUsername(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { username } = req.params;
+    const { username } = req.query;
 
     if (!username) {
       return res.status(400).json({ message: 'Employee username is required' });
@@ -93,7 +93,7 @@ export async function getEmployeesByUsername(req: any, res: any) {
 export async function getEmployeesByFirstname(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { firstname } = req.params;
+    const { firstname } = req.query;
 
     if (!firstname) {
       return res.status(400).json({ message: 'Employee firstname is required' });
@@ -118,7 +118,7 @@ export async function getEmployeesByFirstname(req: any, res: any) {
 export async function getEmployeesByLastname(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { lastname } = req.params;
+    const { lastname } = req.query;
 
     if (!lastname) {
       return res.status(400).json({ message: 'Employee lastname is required' });
@@ -143,7 +143,7 @@ export async function getEmployeesByLastname(req: any, res: any) {
 export async function getEmployeesNumberOfPages(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { query, itemsPerPage } = req.params;
+    var { query, itemsPerPage } = req.query;
 
     let psnrQuery;
     try {
@@ -151,7 +151,7 @@ export async function getEmployeesNumberOfPages(req: any, res: any) {
     } catch { }
 
     if (!query) {
-      return res.status(400).json({ message: 'Query is required' });
+      query = "";
     }
 
     if (!itemsPerPage) {
@@ -173,18 +173,16 @@ export async function getEmployeesNumberOfPages(req: any, res: any) {
         $count: "totalCount"
       }
     ]).toArray();
-    const totalCount = countResult[0].totalCount
-    console.log("Total Count: " + totalCount);
 
-    const result = countResult.length > 0 ? countResult[0].totalCount : 0;
-    const resultFormatted = Math.ceil(Number(result / itemsPerPage));
-    console.log("Total Count angepasst: " + resultFormatted);
-
-    if (!resultFormatted) {
-      return res.status(404).json({ message: 'NumberOfPages not found' });
+    var totalCount;
+    if (countResult[0]) {
+      totalCount = countResult[0].totalCount;
     }
+    else {
+      totalCount = 0;
+    }
+    const resultFormatted = Math.ceil(Number(totalCount / itemsPerPage));
     res.status(200).json(resultFormatted);
-
   }
   catch (error) {
     res.status(500).json({ error: error.toString() });
@@ -227,7 +225,7 @@ export async function getEmployeesNextFreePsnr(req: any, res: any) {
 export async function getEmployeesFiltered(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { query, itemsPerPage, currentPage } = req.params;
+    var { query, itemsPerPage, currentPage } = req.query;
 
     const parsedItemsPerPage = parseInt(itemsPerPage);
     const parsedCurrentPage = parseInt(currentPage);
@@ -237,10 +235,10 @@ export async function getEmployeesFiltered(req: any, res: any) {
     } catch { }
 
     if (!query) {
-      return res.status(400).json({ message: 'ItemsPerPage is required' });
+      query = "";
     }
     if (!parsedItemsPerPage) {
-      return res.status(400).json({ message: 'Query is required' });
+      return res.status(400).json({ message: 'ItemsPerPage is required' });
     }
     if (!parsedCurrentPage) {
       return res.status(400).json({ message: 'CurrentPage is required' });

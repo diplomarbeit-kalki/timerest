@@ -4,7 +4,7 @@ export async function getTimestampsperday(req: any, res: any) {
     try {
       const { db } = req.app;
   
-      const result = await db.collection('timestamps').find().toArray();
+      const result = await db.collection('timestampsperday').find().toArray();
   
       res.status(200).json(result);
     }

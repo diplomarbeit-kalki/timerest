@@ -1,3 +1,11 @@
+function calculateTimeDifference(time1: string, time2: string): number {
+    const date1 = new Date(time1).getTime();
+    const date2 = new Date(time2).getTime();
+    const diff = date2 - date1;
+    const diffInMinutes =  Math.floor(diff / (1000 * 60));
+    return diffInMinutes;
+}
+
 export async function postTimerecords(req: any, res: any) {
     try {
         const { db, webSocketConnections } = req.app;
@@ -17,7 +25,6 @@ export async function postTimerecords(req: any, res: any) {
             return res.status(400).json({ message: 'Timestamp format is wrong' });
         }
 
-        //Erstelle ein string date mit dem Datum des Timestamps im YYYY-MM-DD Format
         //year = YYYY
         const year = parsedTimestamp.getFullYear();
         //month = MM
@@ -28,7 +35,7 @@ export async function postTimerecords(req: any, res: any) {
         const date = `${year}-${month}-${day}`;
 
         //Ein Dokument von der Datenbank abholen mit der psnr und dem date
-        var timerecord = await db.collection('timerecords').findOne({ emppsnr: psnr, date: date });
+        var timerecord = await db.collection('timerecords').findOne({ emppsnr: parsedpsnr, date: date });
         //console.log("POST---Timestampsperday: " + JSON.stringify(timestampsperday));
 
         //Ergebnisbestätigung
@@ -39,10 +46,10 @@ export async function postTimerecords(req: any, res: any) {
 
         //Wenn der timerecord für den Tag noch nicht besteht
         if (!timerecord) {
-            console.log("POST---Timerecord für diesen Tag noch nicht vorhanden")
+            console.log("POST---Timerecord für diesen Tag wird angelegt")
             const result = await db.collection('timerecords').insertOne(
                 {
-                    emppsnr: psnr,
+                    emppsnr: parsedpsnr,
                     date: date,
                     stamps: [
                         {
@@ -51,11 +58,10 @@ export async function postTimerecords(req: any, res: any) {
                             timestamp: parsedTimestamp
                         }
                     ],
-                    workinghours: 0,
+                    workingtime: "00:00",
                     workingminutes: 0,
-                    breakhours: 0,
+                    breaktime: "00:00",
                     breakminutes: 0
-
                 }
             );
             resultacknowledge = result.acknowledged;
@@ -66,19 +72,19 @@ export async function postTimerecords(req: any, res: any) {
             console.log("POST---Timerecord ist bereits vorhanden");
 
             //timestampsarray für den Tag
-            const timestampsarray = timerecord.stamps;
-            const counter = timestampsarray.length;
+            const timestamps = timerecord.stamps;
+            const timestampsCounter = timestamps.length;
             var message: String;
 
-            if (counter % 2 == 0) {
+            if (timestampsCounter % 2 == 0) {
                 message = "kommt";
                 status = "kommt";
             }
-            else if (counter % 2 == 1) {
+            else if (timestampsCounter % 2 == 1) {
                 message = "geht";
                 status = "geht";
             }
-            
+
             const result = await db.collection('timerecords').updateOne(
                 {
                     emppsnr: psnr,
@@ -87,7 +93,7 @@ export async function postTimerecords(req: any, res: any) {
                 {
                     $push: {
                         stamps: {
-                            number: counter + 1,
+                            number: timestampsCounter + 1,
                             type: message,
                             timestamp: parsedTimestamp
                         }
@@ -98,7 +104,7 @@ export async function postTimerecords(req: any, res: any) {
             resultacknowledge = result.acknowledged;
         }
 
-        const employee = await db.collection('employees').findOne({psnr: parsedpsnr});
+        const employee = await db.collection('employees').findOne({ psnr: parsedpsnr });
 
         if (resultacknowledge && employee) {
             const firstname = employee.firstname;
@@ -109,10 +115,59 @@ export async function postTimerecords(req: any, res: any) {
 
             console.log("Message: " + `${firstname} ${lastname} ${status}`);
 
+            //Websocket Nachricht senden
             webSocketConnections.forEach((ws) => {
                 ws.send(`${firstname} ${lastname} ${status}`);
                 console.log("websocket---Message gesendet");
             });
+
+            //Die Arbeits- und Pausendzeit aktualisieren
+            //Aktuelles Dokument fetchen
+            var actualtimerecord = await db.collection('timerecords').findOne({ emppsnr: psnr, date: date });
+            const actualtimestamps = actualtimerecord.stamps;
+
+            //Variable für die gesamte Arbeits- und Pausenzeit
+            var totalworktime = 0;
+            var totalbreaktime = 0;
+
+            //Jedes Element ausgeben
+            for (let i = 0; i < actualtimestamps.length; i++) {
+                if (actualtimestamps[i].number > 1 && actualtimestamps[i].number % 2 == 0) {
+                    const timediff = calculateTimeDifference(actualtimestamps[i - 1].timestamp, actualtimestamps[i].timestamp);
+                    totalworktime += timediff;
+                    //console.log(`Stempelnumer ${actualtimestamps[i - 1].number}-${actualtimestamps[i].number}, Arbeitszeit:  ${timediff}`);
+                }
+                if (actualtimestamps[i].number > 1 && actualtimestamps[i].number % 2 == 1) {
+                    const timediff = calculateTimeDifference(actualtimestamps[i - 1].timestamp, actualtimestamps[i].timestamp);
+                    totalbreaktime += timediff;
+                    //console.log(`Stempelnumer ${actualtimestamps[i - 1].number}-${actualtimestamps[i].number}, Pausenzeit:  ${timediff}`);
+                }
+            };
+
+            const totalWorkHours = Math.floor(totalworktime / 60).toString().padStart(2, '0');
+            const totalWorkMinutes = (totalworktime % 60).toString().padStart(2, '0');
+            const totalBreakHours = Math.floor(totalbreaktime / 60).toString().padStart(2, '0');
+            const totalBreakMinutes = (totalbreaktime % 60).toString().padStart(2, '0');
+
+            const result = await db.collection('timerecords').updateOne(
+                {
+                    emppsnr: psnr,
+                    date: date
+                },
+                {
+                    $set: {
+                        workingtime: `${totalWorkHours}:${totalWorkMinutes}`,
+                        workingminutes: totalworktime,
+                        breaktime: `${totalBreakHours}:${totalBreakMinutes}`,
+                        breakminutes: totalbreaktime
+                    }
+                }
+            );
+            if (result.acknowledged) {
+                //console.log("Erfolgreich Zeiten aktualisiert");
+            }
+
+            //HTTP-Response senden
             res.status(201).json(`${firstname} ${lastname} ${status}`);
         } else {
             throw new Error('Timestamp not created');

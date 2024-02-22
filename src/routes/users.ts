@@ -7,7 +7,7 @@ console.log('Erstelle Routen: /employees');
 
 //GET-Routen
 router.get('/', getUsers);
-router.get('/byId/:id', getUsersById);
-router.get('/byUsername/:username', getUserByUsername);
+router.get('/byId', getUsersById);
+router.get('/byUsername', getUserByUsername);
 
 module.exports = router;
