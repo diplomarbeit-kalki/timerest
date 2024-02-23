@@ -1,5 +1,5 @@
 import { getTimerecords, getTimerecordById, getTimerecordByPsnrAndDate, getTimerecordsByPsnrAndPeriod } from "../controllers/timerecords/getTimerecords";
-import { postTimerecords } from "../controllers/timerecords/postTimerecords";
+import { postTimerecord } from "../controllers/timerecords/postTimerecords";
 
 //Initialisierung
 const express  = require('express');
@@ -13,6 +13,6 @@ router.get('/byPsnrAndDate', getTimerecordByPsnrAndDate);
 router.get('/byPsnrAndPeriod', getTimerecordsByPsnrAndPeriod);
 
 //POST-Routen
-router.post('/', postTimerecords);
+router.post('/', postTimerecord);
 
 module.exports = router;

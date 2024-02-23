@@ -6,7 +6,7 @@ function calculateTimeDifference(time1: string, time2: string): number {
     return diffInMinutes;
 }
 
-export async function postTimerecords(req: any, res: any) {
+export async function postTimerecord(req: any, res: any) {
     try {
         const { db, webSocketConnections } = req.app;
         const { psnr, timestamp } = req.body;
