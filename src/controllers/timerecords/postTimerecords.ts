@@ -36,7 +36,14 @@ export async function postTimerecords(req: any, res: any) {
 
         //Ein Dokument von der Datenbank abholen mit der psnr und dem date
         var timerecord = await db.collection('timerecords').findOne({ emppsnr: parsedpsnr, date: date });
-        //console.log("POST---Timestampsperday: " + JSON.stringify(timestampsperday));
+        const employee = await db.collection('employees').findOne({ psnr: parsedpsnr });
+        if (!employee) {
+            webSocketConnections.forEach((ws) => {
+                ws.send(JSON.stringify({ message: `Personalnummer nicht vorhanden!` }));
+                console.log("websocket---Personalnummer nicht vorhanden!---gesendet");
+            });
+            throw new Error('Personalnummer nicht vorhanden!');
+        }
 
         //Ergebnisbestätigung
         var resultacknowledge = false;
@@ -45,7 +52,7 @@ export async function postTimerecords(req: any, res: any) {
         var status = "fehlgeschlagen";
 
         //Wenn der timerecord für den Tag noch nicht besteht
-        if (!timerecord) {
+        if (!timerecord && employee) {
             console.log("POST---Timerecord für diesen Tag wird angelegt")
             const result = await db.collection('timerecords').insertOne(
                 {
@@ -68,7 +75,7 @@ export async function postTimerecords(req: any, res: any) {
             status = "kommt";
         }
         //Wenn der timerecord für den Tag bereits besteht
-        else if (timerecord) {
+        else if (timerecord && employee) {
             console.log("POST---Timerecord ist bereits vorhanden");
 
             //timestampsarray für den Tag
@@ -103,7 +110,6 @@ export async function postTimerecords(req: any, res: any) {
             );
             resultacknowledge = result.acknowledged;
         }
-        const employee = await db.collection('employees').findOne({ psnr: parsedpsnr });
         if (resultacknowledge && employee) {
             const firstname = employee.firstname;
             const lastname = employee.lastname;
@@ -115,8 +121,9 @@ export async function postTimerecords(req: any, res: any) {
 
             //Websocket Nachricht senden
             webSocketConnections.forEach((ws) => {
-                ws.send(`${firstname} ${lastname} ${status}`);
-                console.log("websocket---Message gesendet");
+                ws.send(JSON.stringify({ psnr: `${parsedpsnr}`, message: `${firstname} ${lastname} ${status}` }));
+                //ws.send(`${firstname} ${lastname} ${status}`);
+                console.log("websocket---Vorname Nachname Status---gesendet");
             });
 
             //Die Arbeits- und Pausendzeit aktualisieren
@@ -170,13 +177,13 @@ export async function postTimerecords(req: any, res: any) {
 
             //HTTP-Response senden
             res.status(201).json(`${firstname} ${lastname} ${status}`);
-        } 
+        }
         else {
             throw new Error('Timestamp creation failed');
         }
     }
     catch (error) {
-        console.log("Fehler: " + error.toString());
-        res.status(500).json({ error: error.toString() });
+        console.log(error.toString());
+        res.status(500).json(error.toString());
     }
 }

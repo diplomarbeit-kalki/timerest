@@ -39,7 +39,7 @@ async function start() {
       webSocketConnections.push(ws);
 
       // Senden einer Nachricht an den Client, wenn die Verbindung hergestellt ist
-      ws.send('Verbindung mit Server hergestellt!');
+      ws.send(JSON.stringify({message: 'Verbindung mit Server hergestellt!'}));
 
       // Ereignishandler für eingehende Nachrichten vom Client
       ws.on('message', (message) => {
