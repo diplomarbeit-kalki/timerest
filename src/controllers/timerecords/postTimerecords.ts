@@ -121,7 +121,7 @@ export async function postTimerecords(req: any, res: any) {
 
             //Websocket Nachricht senden
             webSocketConnections.forEach((ws) => {
-                ws.send(JSON.stringify({ psnr: `${parsedpsnr}`, message: `${firstname} ${lastname} ${status}` }));
+                ws.send(JSON.stringify({ psnr: `${parsedpsnr}`, message: `${firstname} ${lastname} ${status}`, profilepicture: employee.profilepicture}));
                 //ws.send(`${firstname} ${lastname} ${status}`);
                 console.log("websocket---Vorname Nachname Status---gesendet");
             });
