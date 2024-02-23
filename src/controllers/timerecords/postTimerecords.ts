@@ -2,7 +2,7 @@ function calculateTimeDifference(time1: string, time2: string): number {
     const date1 = new Date(time1).getTime();
     const date2 = new Date(time2).getTime();
     const diff = date2 - date1;
-    const diffInMinutes =  Math.floor(diff / (1000 * 60));
+    const diffInMinutes = Math.floor(diff / (1000 * 60));
     return diffInMinutes;
 }
 
@@ -15,7 +15,7 @@ export async function postTimerecords(req: any, res: any) {
         const parsedTimestamp = new Date(timestamp);
         const parsedpsnr = parseInt(psnr);
 
-        console.log("timestampsperday---POST-Anfrage: " + JSON.stringify(req.body));
+        console.log("Tiemrecord---POST-Anfrage: " + JSON.stringify(req.body));
 
         //Überprüfen ob die benötigten Parameter mitgegeben wurde
         if (!parsedpsnr) {
@@ -87,7 +87,7 @@ export async function postTimerecords(req: any, res: any) {
 
             const result = await db.collection('timerecords').updateOne(
                 {
-                    emppsnr: psnr,
+                    emppsnr: parsedpsnr,
                     date: date
                 },
                 {
@@ -103,9 +103,7 @@ export async function postTimerecords(req: any, res: any) {
             );
             resultacknowledge = result.acknowledged;
         }
-
         const employee = await db.collection('employees').findOne({ psnr: parsedpsnr });
-
         if (resultacknowledge && employee) {
             const firstname = employee.firstname;
             const lastname = employee.lastname;
@@ -123,7 +121,7 @@ export async function postTimerecords(req: any, res: any) {
 
             //Die Arbeits- und Pausendzeit aktualisieren
             //Aktuelles Dokument fetchen
-            var actualtimerecord = await db.collection('timerecords').findOne({ emppsnr: psnr, date: date });
+            var actualtimerecord = await db.collection('timerecords').findOne({ emppsnr: parsedpsnr, date: date });
             const actualtimestamps = actualtimerecord.stamps;
 
             //Variable für die gesamte Arbeits- und Pausenzeit
@@ -151,7 +149,7 @@ export async function postTimerecords(req: any, res: any) {
 
             const result = await db.collection('timerecords').updateOne(
                 {
-                    emppsnr: psnr,
+                    emppsnr: parsedpsnr,
                     date: date
                 },
                 {
@@ -164,16 +162,21 @@ export async function postTimerecords(req: any, res: any) {
                 }
             );
             if (result.acknowledged) {
-                //console.log("Erfolgreich Zeiten aktualisiert");
+                console.log("Erfolgreich Zeiten aktualisiert");
+            }
+            else {
+                throw new Error('Abreits- und Pausenzeiten nicht aktualisiert');
             }
 
             //HTTP-Response senden
             res.status(201).json(`${firstname} ${lastname} ${status}`);
-        } else {
-            throw new Error('Timestamp not created');
+        } 
+        else {
+            throw new Error('Timestamp creation failed');
         }
     }
     catch (error) {
+        console.log("Fehler: " + error.toString());
         res.status(500).json({ error: error.toString() });
     }
 }
