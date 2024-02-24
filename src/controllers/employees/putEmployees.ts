@@ -48,6 +48,7 @@ export async function putEmployee(req: any, res: any) {
     }
 }
 
+//To add a Transponder
 export async function putEmployeeWithPsnr(req: any, res: any) {
     try {
         const { db } = req.app;
@@ -65,8 +66,9 @@ export async function putEmployeeWithPsnr(req: any, res: any) {
                 tag: tag
             }
         });
+        console.log("RESULT: " + JSON.stringify(result));
 
-        if (result.acknowledged) {
+        if (result.modifiedCount == 1) {
             res.status(200).json(`Employee updated`);
         }
         else {
