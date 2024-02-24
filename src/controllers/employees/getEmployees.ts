@@ -222,7 +222,7 @@ export async function getEmployeesNextFreePsnr(req: any, res: any) {
   }
 }
 
-export async function getEmployeesFiltered(req: any, res: any) {
+export async function getEmployeesFilteredWithParameter(req: any, res: any) {
   try {
     const { db } = req.app;
     var { query, itemsPerPage, currentPage } = req.query;
@@ -265,6 +265,47 @@ export async function getEmployeesFiltered(req: any, res: any) {
       },
       {
         $limit: parsedItemsPerPage
+      }
+    ]).toArray();
+
+    if (!result) {
+      return res.status(404).json({ message: 'Employees not found' });
+    }
+    res.status(200).json(result);
+
+  }
+  catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+}
+
+export async function getEmployeesFiltered(req: any, res: any) {
+  try {
+    const { db } = req.app;
+    var { query } = req.query;
+
+    let psnrQuery;
+    try {
+      psnrQuery = parseInt(query);
+    } catch { }
+
+    if (!query) {
+      query = "";
+    }
+
+    const result = await db.collection("employees").aggregate([
+      {
+        $match: {
+          $or: [
+            { "psnr": psnrQuery },
+            { "username": { $regex: new RegExp(query, "i") } },
+            { "firstname": { $regex: new RegExp(query, "i") } },
+            { "lastname": { $regex: new RegExp(query, "i") } },
+          ]
+        }
+      },
+      {
+        $sort: { "psnr": 1 }
       }
     ]).toArray();
 
