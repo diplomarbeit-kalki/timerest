@@ -30,7 +30,7 @@ async function start() {
     app.use('/employees', require('./routes/employees'));
     app.use('/timestampsperday', require('./routes/timestampsperday'));
     app.use('/users', require('./routes/users'));
-    app.use('/unregisteredtags', require('./routes/unregisteredtags'));
+    app.use('/transponders', require('./routes/transponders'));
     app.use('/timerecords', require('./routes/timerecords'));
 
     //Websocket

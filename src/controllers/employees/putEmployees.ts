@@ -23,6 +23,7 @@ export async function putEmployee(req: any, res: any) {
             $set: {
                 firstname: firstname,
                 lastname: lastname,
+                username: createUsername(firstname, lastname),
                 birthdate: birthdate,
                 street: street,
                 housenr: housenr,
@@ -31,6 +32,37 @@ export async function putEmployee(req: any, res: any) {
                 phonenr: phonenr,
                 email: email,
                 editeddate: new Date
+            }
+        });
+
+        if (result.acknowledged) {
+            res.status(200).json(`Employee updated`);
+        }
+        else {
+            throw new Error('Employee update failed');
+        }
+    }
+    catch (error) {
+        console.log(error.toString());
+        res.status(500).json(error.toString());
+    }
+}
+
+export async function putEmployeeWithPsnr(req: any, res: any) {
+    try {
+        const { db } = req.app;
+        const { psnr } = req.params;
+        var { tag } = req.body;
+
+        if (!tag) {
+            return res.status(400).json({ message: 'Tag is required' });
+        }
+        const parsedPsnr = parseInt(psnr);
+
+        const result = await db.collection('employees').updateOne(
+            { psnr: parsedPsnr }, {
+            $set: {
+                tag: tag
             }
         });
 

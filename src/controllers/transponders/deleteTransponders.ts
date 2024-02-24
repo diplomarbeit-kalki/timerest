@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-export async function deleteUnregisteredtag(req: any, res: any) {
+export async function deleteTransponder(req: any, res: any) {
     try {
         const { db } = req.app;
         const { id } = req.params;
@@ -10,7 +10,7 @@ export async function deleteUnregisteredtag(req: any, res: any) {
         }
         const parsedId = new ObjectId(id);
 
-        const result = await db.collection('unregisteredtags').deleteOne({ _id: parsedId });
+        const result = await db.collection('transponders').deleteOne({ _id: parsedId });
         if (result.acknowledged) {
             res.status(200).json(`Transponder deleted`);
         }
