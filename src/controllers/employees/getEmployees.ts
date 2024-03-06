@@ -12,10 +12,10 @@ export async function getEmployees(req: any, res: any) {
   }
 }
 
-export async function getEmployeesById(req: any, res: any) {
+export async function getEmployeeById(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { id } = req.query;
+    const { id } = req.params;
 
     if (!id) {
       return res.status(400).json({ message: 'Employee id is required' });
@@ -39,7 +39,7 @@ export async function getEmployeesById(req: any, res: any) {
   }
 }
 
-export async function getEmployeesByPsnr(req: any, res: any) {
+export async function getEmployeeByPsnr(req: any, res: any) {
   try {
     const { db } = req.app;
     const { psnr } = req.query;
@@ -140,56 +140,7 @@ export async function getEmployeesByLastname(req: any, res: any) {
   }
 }
 
-export async function getEmployeesNumberOfPages(req: any, res: any) {
-  try {
-    const { db } = req.app;
-    var { query, itemsPerPage } = req.query;
-
-    let psnrQuery;
-    try {
-      psnrQuery = parseInt(query);
-    } catch { }
-
-    if (!query) {
-      query = "";
-    }
-
-    if (!itemsPerPage) {
-      return res.status(400).json({ message: 'ItemsPerPage is required' });
-    }
-
-    const countResult = await db.collection("employees").aggregate([
-      {
-        $match: {
-          $or: [
-            { "psnr": psnrQuery },
-            { "username": { $regex: new RegExp(query, "i") } },
-            { "firstname": { $regex: new RegExp(query, "i") } },
-            { "lastname": { $regex: new RegExp(query, "i") } },
-          ]
-        }
-      },
-      {
-        $count: "totalCount"
-      }
-    ]).toArray();
-
-    var totalCount;
-    if (countResult[0]) {
-      totalCount = countResult[0].totalCount;
-    }
-    else {
-      totalCount = 0;
-    }
-    const resultFormatted = Math.ceil(Number(totalCount / itemsPerPage));
-    res.status(200).json(resultFormatted);
-  }
-  catch (error) {
-    res.status(500).json({ error: error.toString() });
-  }
-}
-
-export async function getEmployeesNextFreePsnr(req: any, res: any) {
+export async function getNextFreePsnr(req: any, res: any) {
   try {
     const { db } = req.app;
 
@@ -215,63 +166,6 @@ export async function getEmployeesNextFreePsnr(req: any, res: any) {
       return res.status(404).json({ message: 'NextFreePsnr not found' });
     }
     res.status(200).json(nextFreePsnr);
-
-  }
-  catch (error) {
-    res.status(500).json({ error: error.toString() });
-  }
-}
-
-export async function getEmployeesFilteredWithParameter(req: any, res: any) {
-  try {
-    const { db } = req.app;
-    var { query, itemsPerPage, currentPage } = req.query;
-
-    const parsedItemsPerPage = parseInt(itemsPerPage);
-    const parsedCurrentPage = parseInt(currentPage);
-    let psnrQuery;
-    try {
-      psnrQuery = parseInt(query);
-    } catch { }
-
-    if (!query) {
-      query = "";
-    }
-    if (!parsedItemsPerPage) {
-      return res.status(400).json({ message: 'ItemsPerPage is required' });
-    }
-    if (!parsedCurrentPage) {
-      return res.status(400).json({ message: 'CurrentPage is required' });
-    }
-
-    const offset = (parsedCurrentPage - 1) * parsedItemsPerPage;
-
-    const result = await db.collection("employees").aggregate([
-      {
-        $match: {
-          $or: [
-            { "psnr": psnrQuery },
-            { "username": { $regex: new RegExp(query, "i") } },
-            { "firstname": { $regex: new RegExp(query, "i") } },
-            { "lastname": { $regex: new RegExp(query, "i") } },
-          ]
-        }
-      },
-      {
-        $sort: { "psnr": 1 }
-      },
-      {
-        $skip: offset
-      },
-      {
-        $limit: parsedItemsPerPage
-      }
-    ]).toArray();
-
-    if (!result) {
-      return res.status(404).json({ message: 'Employees not found' });
-    }
-    res.status(200).json(result);
 
   }
   catch (error) {

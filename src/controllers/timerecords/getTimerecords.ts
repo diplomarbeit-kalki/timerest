@@ -15,7 +15,7 @@ export async function getTimerecords(req: any, res: any) {
 export async function getTimerecordById(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { id } = req.query;
+    const { id } = req.params;
 
     if (!id) {
       return res.status(400).json({ message: 'id is required' });
@@ -23,9 +23,9 @@ export async function getTimerecordById(req: any, res: any) {
 
     const parsedId = new ObjectId(id);
 
-    const result = await db.collection('timerecords').find({
+    const result = await db.collection('timerecords').findOne({
       _id: parsedId
-    }).toArray();
+    });
 
     if (!result) {
       return res.status(404).json({ message: 'Timerecord not found' });

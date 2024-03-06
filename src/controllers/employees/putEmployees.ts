@@ -7,7 +7,7 @@ function createUsername(firstname: string, lastname: string): string {
     return lastPart + firstPart;
 }
 
-export async function putEmployee(req: any, res: any) {
+export async function putEmployeeWithId(req: any, res: any) {
     try {
         const { db } = req.app;
         const { id } = req.params;

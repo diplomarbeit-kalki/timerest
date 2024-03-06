@@ -8,9 +8,9 @@ console.log('Erstelle Routen: /timerecords');
 
 //GET-Routen
 router.get('/', getTimerecords);
-router.get('/byid', getTimerecordById);
-router.get('/byPsnrAndDate', getTimerecordByPsnrAndDate);
-router.get('/byPsnrAndPeriod', getTimerecordsByPsnrAndPeriod);
+router.get('/byid/:id', getTimerecordById);
+router.get('/byPsnrAndDate', getTimerecordByPsnrAndDate); //IN VERWENDUNG
+router.get('/byPsnrAndPeriod', getTimerecordsByPsnrAndPeriod); //IN VERWENDUNG
 
 //POST-Routen
 router.post('/', postTimerecord);

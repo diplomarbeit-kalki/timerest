@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-export async function deleteEmployee(req: any, res: any) {
+export async function deleteEmployeeWithId(req: any, res: any) {
     try {
         const { db } = req.app;
         const { id } = req.params;

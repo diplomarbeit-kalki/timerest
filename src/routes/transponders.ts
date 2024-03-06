@@ -2,15 +2,15 @@ import { getTransponders, getTransponderById } from "../controllers/transponders
 import { deleteTransponder } from "../controllers/transponders/deleteTransponders";
 
 //Initialisierung
-const express  = require('express');
+const express = require('express');
 const router = express.Router();
 console.log('Erstelle Routen: /transponders');
 
 //GET-Routen
-router.get('/', getTransponders);
-router.get('/byId/:id', getTransponderById);
+router.get('/', getTransponders); //IN VERWENDUNG
+router.get('/byId/:id', getTransponderById); //IN VERWENDUNG
 
 //DELETE-Routen
-router.delete('/withId/:id', deleteTransponder); 
+router.delete('/withId/:id', deleteTransponder);    //IN VERWENDUNG
 
 module.exports = router;
