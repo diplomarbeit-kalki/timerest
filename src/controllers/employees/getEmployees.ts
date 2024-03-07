@@ -228,3 +228,54 @@ export async function getEmployeesWithoutTransponder(req: any, res: any) {
     res.status(500).json({ error: error.toString() });
   }
 }
+
+export async function getEmployeesWithoutTransponderFiltered(req: any, res: any) {
+  try {
+    const { db } = req.app;
+    var { query } = req.query;
+
+    let psnrQuery;
+    try {
+      psnrQuery = parseInt(query);
+    } catch { }
+
+    if (!query) {
+      query = "";
+    }
+
+    const result = await db.collection("employees").aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              $or: [
+                { "psnr": psnrQuery },
+                { "username": { $regex: new RegExp(query, "i") } },
+                { "firstname": { $regex: new RegExp(query, "i") } },
+                { "lastname": { $regex: new RegExp(query, "i") } },
+              ]
+            },
+            {
+              $or: [
+                { "tag": null },
+                { "tag": { $exists: false } }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        $sort: { "psnr": 1 }
+      }
+    ]).toArray();
+
+    if (!result) {
+      return res.status(404).json({ message: 'Employees not found' });
+    }
+    res.status(200).json(result);
+
+  }
+  catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+}
