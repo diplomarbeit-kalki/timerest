@@ -144,29 +144,27 @@ export async function getNextFreePsnr(req: any, res: any) {
   try {
     const { db } = req.app;
 
-    // Pipeline für die Aggregation
-    const aggregationPipeline = [
-      {
-        $group: {
-          _id: null,
-          maxPsnr: { $max: "$psnr" },
-        },
-      },
-    ];
+    var highestPsnrEmployees = 0;
+    var highestPsnrEmployeesArchive = 0;
+    var highestPsnr = 0;
 
-    const result = await db.collection("employees").aggregate(aggregationPipeline).toArray();
-
-    // Extrahiere die maximale Personalnummer
-    const maxPsnr = result.length > 0 ? result[0].maxPsnr : 0;
-
-    // Finde die nächste freie Personalnummer
-    const nextFreePsnr = maxPsnr + 1;
-
-    if (!nextFreePsnr) {
-      return res.status(404).json({ message: 'NextFreePsnr not found' });
+    const res1 = await db.collection("employees").find().sort({psnr: -1}).limit(1).toArray();
+    if(res1[0].psnr) {
+      highestPsnrEmployees = res1[0].psnr;
     }
+    const res2 = await db.collection("employeesArchive").find().sort({psnr: -1}).limit(1).toArray();
+    if(res2[0].psnr) {
+      highestPsnrEmployeesArchive = res2[0].psnr;
+    }
+    if(highestPsnrEmployeesArchive > highestPsnrEmployees) {
+      highestPsnr = highestPsnrEmployeesArchive;
+    }
+    else {
+      highestPsnr = highestPsnrEmployees;
+    }
+    
+    const nextFreePsnr = highestPsnr + 1;
     res.status(200).json(nextFreePsnr);
-
   }
   catch (error) {
     res.status(500).json({ error: error.toString() });

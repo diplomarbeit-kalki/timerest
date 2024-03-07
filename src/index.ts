@@ -28,6 +28,7 @@ async function start() {
 
     // Routes
     app.use('/employees', require('./routes/employees'));
+    app.use('/employeesArchive', require('./routes/employeesArchive'));
     app.use('/users', require('./routes/users'));
     app.use('/transponders', require('./routes/transponders'));
     app.use('/timerecords', require('./routes/timerecords'));

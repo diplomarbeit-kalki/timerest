@@ -1,7 +1,7 @@
 //import { createEmployeeController } from "../controllers/createEmployee";
 import { getEmployees, getEmployeeById, getEmployeeByPsnr, getEmployeesByUsername, getEmployeesByFirstname, getEmployeesByLastname, getNextFreePsnr, getEmployeesFiltered } from "../controllers/employees/getEmployees";
 import { postEmployee } from "../controllers/employees/postEmployees";
-import { putEmployeeWithId, putEmployeeWithPsnr } from "../controllers/employees/putEmployees";
+import { putEmployeeWithId, putEmployeeWithPsnr, putEmployeeFromArchive } from "../controllers/employees/putEmployees";
 import { deleteEmployeeWithId } from "../controllers/employees/deleteEmployees";
 
 //Initialisierung
@@ -24,6 +24,7 @@ router.post('/', postEmployee); //IN VERWENDUNG
 
 //PUT-Routen
 router.put('/withId/:id', putEmployeeWithId); //IN VERWENDUNG
+router.put('/fromArchive/withId/:id', putEmployeeFromArchive); //IN VERWENDUNG
 //PUT-Route für Tag
 router.put('/withPsnr/:psnr', putEmployeeWithPsnr); //IN VERWENDUNG
 

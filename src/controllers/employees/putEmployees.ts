@@ -80,3 +80,31 @@ export async function putEmployeeWithPsnr(req: any, res: any) {
         res.status(500).json(error.toString());
     }
 }
+
+//Zum dearchivieren
+export async function putEmployeeFromArchive(req: any, res: any) {
+    try {
+        const { db } = req.app;
+        const { id } = req.params;
+
+        const parsedId = new ObjectId(id);
+
+        if (!id) {
+            return res.status(400).json({ message: 'Id is required' });
+        }
+
+        const employee = await db.collection('employeesArchive').findOne({ _id: parsedId });
+        const result = await db.collection('employees').insertOne(employee);
+        const resultdel = await db.collection('employeesArchive').deleteOne({ _id: parsedId });
+        if (result.acknowledged && resultdel.acknowledged) {
+            res.status(200).json(`Employee dearchived`);
+        }
+        else {
+            throw new Error('Employee dearchive failed');
+        }
+    }
+    catch (error) {
+        console.log(error.toString());
+        res.status(500).json(error.toString());
+    }
+}

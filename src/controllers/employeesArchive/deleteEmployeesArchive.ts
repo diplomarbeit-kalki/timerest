@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-export async function deleteEmployeeWithId(req: any, res: any) {
+export async function deleteEmployeeArchiveWithId(req: any, res: any) {
     try {
         const { db } = req.app;
         const { id } = req.params;
@@ -10,7 +10,7 @@ export async function deleteEmployeeWithId(req: any, res: any) {
         }
         const parsedId = new ObjectId(id);
 
-        const result = await db.collection('employees').deleteOne({ _id: parsedId });
+        const result = await db.collection('employeesArchive').deleteOne({ _id: parsedId });
         if (result.deletedCount != 0) {
             res.status(200).json(`Employee deleted`);
         }
