@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export async function getEmployees(req: any, res: any) {
   try {
-    const { db, webSocketConnections } = req.app;
+    const { db } = req.app;
     const result = await db.collection('employees').find().toArray();
 
     res.status(200).json(result);
@@ -148,21 +148,21 @@ export async function getNextFreePsnr(req: any, res: any) {
     var highestPsnrEmployeesArchive = 0;
     var highestPsnr = 0;
 
-    const res1 = await db.collection("employees").find().sort({psnr: -1}).limit(1).toArray();
-    if(res1[0].psnr) {
+    const res1 = await db.collection("employees").find().sort({ psnr: -1 }).limit(1).toArray();
+    if (res1[0].psnr) {
       highestPsnrEmployees = res1[0].psnr;
     }
-    const res2 = await db.collection("employeesArchive").find().sort({psnr: -1}).limit(1).toArray();
-    if(res2[0].psnr) {
+    const res2 = await db.collection("employeesArchive").find().sort({ psnr: -1 }).limit(1).toArray();
+    if (res2[0].psnr) {
       highestPsnrEmployeesArchive = res2[0].psnr;
     }
-    if(highestPsnrEmployeesArchive > highestPsnrEmployees) {
+    if (highestPsnrEmployeesArchive > highestPsnrEmployees) {
       highestPsnr = highestPsnrEmployeesArchive;
     }
     else {
       highestPsnr = highestPsnrEmployees;
     }
-    
+
     const nextFreePsnr = highestPsnr + 1;
     res.status(200).json(nextFreePsnr);
   }
@@ -206,6 +206,23 @@ export async function getEmployeesFiltered(req: any, res: any) {
     }
     res.status(200).json(result);
 
+  }
+  catch (error) {
+    res.status(500).json({ error: error.toString() });
+  }
+}
+
+export async function getEmployeesWithoutTransponder(req: any, res: any) {
+  try {
+    const { db } = req.app;
+    const result = await db.collection('employees').find({
+      $or: [
+        { tag: { $exists: false } },
+        { tag: null }
+      ]
+    }).sort({ "psnr": 1 }).toArray();
+
+    res.status(200).json(result);
   }
   catch (error) {
     res.status(500).json({ error: error.toString() });

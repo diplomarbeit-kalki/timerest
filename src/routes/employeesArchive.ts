@@ -5,7 +5,7 @@ import { deleteEmployeeArchiveWithId } from "../controllers/employeesArchive/del
 //Initialisierung
 const express  = require('express');
 const router = express.Router();
-console.log('Erstelle Routen: /employees');
+console.log('Erstelle Routen: /employeesArchive');
 
 //GET-Routen
 router.get('/', getEmployeesArchive); //IN VERWENDUNG

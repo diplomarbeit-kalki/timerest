@@ -1,5 +1,5 @@
 //import { createEmployeeController } from "../controllers/createEmployee";
-import { getEmployees, getEmployeeById, getEmployeeByPsnr, getEmployeesByUsername, getEmployeesByFirstname, getEmployeesByLastname, getNextFreePsnr, getEmployeesFiltered } from "../controllers/employees/getEmployees";
+import { getEmployees, getEmployeeById, getEmployeeByPsnr, getEmployeesByUsername, getEmployeesByFirstname, getEmployeesByLastname, getNextFreePsnr, getEmployeesFiltered, getEmployeesWithoutTransponder } from "../controllers/employees/getEmployees";
 import { postEmployee } from "../controllers/employees/postEmployees";
 import { putEmployeeWithId, putEmployeeWithPsnr, putEmployeeFromArchive } from "../controllers/employees/putEmployees";
 import { deleteEmployeeWithId } from "../controllers/employees/deleteEmployees";
@@ -18,6 +18,7 @@ router.get('/byFirstname', getEmployeesByFirstname);
 router.get('/byLastname', getEmployeesByLastname);
 router.get('/nextFreePsnr', getNextFreePsnr); //IN VERWENDUNG
 router.get('/filtered', getEmployeesFiltered); //IN VERWENDUNG
+router.get('/withoutTransponder', getEmployeesWithoutTransponder); //IN VERWENDUNG
 
 //POST-Routen
 router.post('/', postEmployee); //IN VERWENDUNG

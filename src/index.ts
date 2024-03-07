@@ -32,6 +32,7 @@ async function start() {
     app.use('/users', require('./routes/users'));
     app.use('/transponders', require('./routes/transponders'));
     app.use('/timerecords', require('./routes/timerecords'));
+    app.use('/pdf', require('./routes/pdf'));
 
     //Websocket
     wss.on('connection', (ws) => {

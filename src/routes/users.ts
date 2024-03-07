@@ -3,7 +3,7 @@ import { getUsers, getUserById, getUserByUsername } from "../controllers/users/g
 //Initialisierung
 const express  = require('express');
 const router = express.Router();
-console.log('Erstelle Routen: /employees');
+console.log('Erstelle Routen: /users');
 
 //GET-Routen
 router.get('/', getUsers);
