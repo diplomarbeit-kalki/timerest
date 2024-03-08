@@ -2,7 +2,7 @@
 import { getEmployees, getEmployeeById, getEmployeeByPsnr, getEmployeesByUsername, getEmployeesByFirstname, getEmployeesByLastname, getNextFreePsnr, getEmployeesFiltered, getEmployeesWithoutTransponder, getEmployeesWithoutTransponderFiltered } from "../controllers/employees/getEmployees";
 import { postEmployee } from "../controllers/employees/postEmployees";
 import { putEmployeeWithId, putEmployeeWithPsnr, putEmployeeFromArchive } from "../controllers/employees/putEmployees";
-import { deleteEmployeeWithId } from "../controllers/employees/deleteEmployees";
+import { deleteEmployeeWithId, deleteTagFromEmpoyeeWithId } from "../controllers/employees/deleteEmployees";
 
 //Initialisierung
 const express  = require('express');
@@ -32,5 +32,6 @@ router.put('/withPsnr/:psnr', putEmployeeWithPsnr); //IN VERWENDUNG
 
 //DELETE-Routen
 router.delete('/withId/:id', deleteEmployeeWithId); //IN VERWENDUNG
+router.delete('/tag/withId/:id', deleteTagFromEmpoyeeWithId); //IN VERWENDUNG
 
 module.exports = router;
