@@ -1,38 +1,43 @@
 function calculateTimeDifference(time1: string, time2: string): number {
-    const date1 = new Date(time1).getTime();
-    const date2 = new Date(time2).getTime();
-    const diff = date2 - date1;
-    const diffInMinutes = Math.floor(diff / (1000 * 60));
-    return diffInMinutes;
+    const [hours1, minutes1, seconds1] = time1.split(":").map(Number);
+    const [hours2, minutes2, seconds2] = time2.split(":").map(Number);
+    
+    const totalMinutes1 = hours1 * 60 + minutes1 + seconds1 / 60;
+    const totalMinutes2 = hours2 * 60 + minutes2 + seconds2 / 60;
+
+    return Math.abs(totalMinutes1 - totalMinutes2);
 }
 
 export async function postTimerecord(req: any, res: any) {
     try {
         const { db, webSocketConnections } = req.app;
-        const { psnr, timestamp } = req.body;
+        const { psnr, date, timestamp } = req.body;
 
-        //Parsen der Parameter
-        const parsedTimestamp = new Date(timestamp);
         const parsedpsnr = parseInt(psnr);
-
-        console.log("Tiemrecord---POST-Anfrage: " + JSON.stringify(req.body));
-
-        //Überprüfen ob die benötigten Parameter mitgegeben wurde
+        const [day, month, year] = date.split("-");
+        const [hours, minutes, seconds] = timestamp.split(":");
+    
         if (!parsedpsnr) {
             return res.status(400).json({ message: 'Psnr is required' });
         }
-        if (isNaN(parsedTimestamp.getTime())) {
-            return res.status(400).json({ message: 'Timestamp format is wrong' });
+        if (!hours) {
+            return res.status(400).json({ message: 'Timestamp format wrong' });
         }
-
-        //year = YYYY
-        const year = parsedTimestamp.getFullYear();
-        //month = MM
-        const month = (parsedTimestamp.getMonth() + 1).toString().padStart(2, '0');
-        //day = DD
-        const day = parsedTimestamp.getDate().toString().padStart(2, '0');
-        //date = YYYY-MM-DD
-        const date = `${year}-${month}-${day}`;
+        if (!minutes) {
+            return res.status(400).json({ message: 'Timestamp format wrong' });
+        }
+        if (!seconds) {
+            return res.status(400).json({ message: 'Timestamp format wrong' });
+        }
+        if (!day) {
+            return res.status(400).json({ message: 'Date format wrong' });
+        }
+        if (!month) {
+            return res.status(400).json({ message: 'Date format wrong' });
+        }
+        if (!year) {
+            return res.status(400).json({ message: 'Date format wrong' });
+        }
 
         //Ein Dokument von der Datenbank abholen mit der psnr und dem date
         var timerecord = await db.collection('timerecords').findOne({ emppsnr: parsedpsnr, date: date });
@@ -62,7 +67,7 @@ export async function postTimerecord(req: any, res: any) {
                         {
                             number: 1,
                             type: 'kommt',
-                            timestamp: parsedTimestamp
+                            timestamp: timestamp
                         }
                     ],
                     workingtime: "00:00",
@@ -102,7 +107,7 @@ export async function postTimerecord(req: any, res: any) {
                         stamps: {
                             number: timestampsCounter + 1,
                             type: message,
-                            timestamp: parsedTimestamp
+                            timestamp: timestamp
                         }
                     }
                 }
@@ -113,17 +118,13 @@ export async function postTimerecord(req: any, res: any) {
         if (resultacknowledge && employee) {
             const firstname = employee.firstname;
             const lastname = employee.lastname;
-            //const hours = parsedTimestamp.getHours().toString().padStart(2, '0');
-            //const minutes = parsedTimestamp.getMinutes().toString().padStart(2, '0');
-            //const seconds = parsedTimestamp.getSeconds().toString().padStart(2, '0');
-
+            const profilepicture = employee.profilepicture;
             console.log("Message: " + `${firstname} ${lastname} ${status}`);
 
             //Websocket Nachricht senden
             webSocketConnections.forEach((ws) => {
-                ws.send(JSON.stringify({ psnr: `${parsedpsnr}`, message: `${firstname} ${lastname} ${status}`, profilepicture: employee.profilepicture}));
-                //ws.send(`${firstname} ${lastname} ${status}`);
-                console.log("websocket---Vorname Nachname Status---gesendet");
+                ws.send(JSON.stringify({ psnr: `${parsedpsnr}`, message: `${firstname} ${lastname} ${status}`, profilepicture: profilepicture}));
+                console.log("websocket---Message---gesendet");
             });
 
             //Die Arbeits- und Pausendzeit aktualisieren

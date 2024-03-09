@@ -1,4 +1,4 @@
-import { getTestPdf } from "../controllers/pdf/getPdf";
+import { getTestPdf, getTimesheetFromMonth } from "../controllers/pdf/getPdf";
 
 //Initialisierung
 const express = require('express');
@@ -7,5 +7,6 @@ console.log('Erstelle Routen: /pdf');
 
 //GET-Routen
 router.get('/', getTestPdf);
+router.get('/timesheetFromMonth', getTimesheetFromMonth);
 
 module.exports = router;

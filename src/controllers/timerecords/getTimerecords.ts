@@ -59,18 +59,27 @@ export async function getTimerecordByPsnrAndDate(req: any, res: any) {
   }
 }
 
-function getDatesBetween(firstDate: string, lastDate: string) {
-  const datesArray = [];
+function getDatesBetween(startDateStr: string, endDateStr: string): string[] {
+  const startDateParts = startDateStr.split('-').map(part => parseInt(part));
+  const endDateParts = endDateStr.split('-').map(part => parseInt(part));
 
-  const startDate = new Date(firstDate);
-  const endDate = new Date(lastDate);
+  const startDate = new Date(startDateParts[2], startDateParts[1] - 1, startDateParts[0]);
+  const endDate = new Date(endDateParts[2], endDateParts[1] - 1, endDateParts[0]);
 
-  let currentDate = startDate;
+  const dateArray: string[] = [];
+  const currentDate = startDate;
+
   while (currentDate <= endDate) {
-    datesArray.push(new Date(currentDate));
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = String(currentDate.getFullYear());
+
+    dateArray.push(`${day}-${month}-${year}`);
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
-  return datesArray;
+
+  return dateArray;
 }
 
 export async function getTimerecordsByPsnrAndPeriod(req: any, res: any) {
@@ -89,15 +98,11 @@ export async function getTimerecordsByPsnrAndPeriod(req: any, res: any) {
       return res.status(400).json({ message: 'Lastdate is required' });
     }
 
-    var trimmedDates;
     const dates = getDatesBetween(firstdate, lastdate);
-    if(dates) {
-      trimmedDates = dates.map(date => date.toISOString().split('T')[0]);
-    }
-
+    
     const timerecords = [];
-    if (trimmedDates) {
-      for (const date of trimmedDates) {
+    if (dates) {
+      for (const date of dates) {
         const result = await db.collection('timerecords').findOne({ "emppsnr": parsedPsnr, "date": date });
         if (result) {
           timerecords.push(result);
@@ -105,6 +110,7 @@ export async function getTimerecordsByPsnrAndPeriod(req: any, res: any) {
       }
     }
     res.status(200).json(timerecords);
+    
   }
   catch (error) {
     res.status(500).json({ error: error.toString() });
