@@ -120,7 +120,7 @@ export async function putTimerecordTimestamp(req: any, res: any) {
             res.status(400).json({ message: `Timestamp update statistic fields  fehlgeschlagen` });
         }
         else {
-            res.status(200).json(`Timerecord timestamp gelöscht und Felder aktualisiert`);
+            res.status(200).json(`Timerecord timestamp hinzugefügt und Felder aktualisiert`);
         }
     }
     catch (error) {
