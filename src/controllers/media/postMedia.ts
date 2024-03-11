@@ -4,16 +4,18 @@ import sharp from 'sharp';
 import fs from 'fs';
 
 const bildPfad = "public/profilepictures";
+const currentDate = new Date();
+const date = `${currentDate.getDate().toString().padStart(2, '0')}${(currentDate.getMonth()).toString().padStart(2, '0') + 1}${currentDate.getFullYear()}`;
+const time = `${currentDate.getHours().toString().padStart(2, '0')}${currentDate.getMinutes().toString().padStart(2, '0')}${currentDate.getSeconds().toString().padStart(2, '0')}`;;
+const filename = `-${date}-${time}`;
 
 // Konfiguration für das Multer-Modul
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        // Pfad zum Ordner, in dem die Bilder gespeichert werden sollen
         cb(null, bildPfad);
     },
     filename: function (req, file, cb) {
-        // Dateiname des gespeicherten Bildes
-        const fileName = req.params.psnr + path.extname(file.originalname); // PSNR mit Dateiendung
+        const fileName = req.params.psnr + filename + path.extname(file.originalname);
         cb(null, fileName);
     }
 });
@@ -29,33 +31,45 @@ async function convertToWebP(inputPath: string, outputPath: string) {
 
 export async function postProfilepicture(req: any, res: any) {
     const { psnr } = req.params;
+    const { db } = req.app;
+
+    const parsedPsnr = parseInt(psnr);
+    if (!psnr) {
+        return res.status(400).json({ message: 'Psnr is required' });
+    }
+
     try {
-        // Upload-Funktion von Multer aufrufen, um das Bild zu verarbeiten
         upload.single('image')(req, res, async function (err: any) {
             if (err instanceof multer.MulterError) {
-                // Multer-Fehler behandeln
                 console.error('Fehler beim Hochladen des Bildes:', err);
                 return res.status(400).send('Multer-Fehler: ' + err.message);
-            } else if (err) {
-                // Andere Fehler behandeln
+            }
+            else if (err) {
                 console.error('Fehler beim Hochladen des Bildes:', err);
                 return res.status(500).send('Interner Serverfehler');
             }
-
-            // Pfad zum hochgeladenen Bild
-            const imagePath = path.join(bildPfad, req.params.psnr + path.extname(req.file.originalname));
-
-            // Pfad für das konvertierte WebP-Bild
-            const webPImagePath = path.join(bildPfad, req.params.psnr + '.webp');
-
-            // Bild in WebP konvertieren
+            const imagePath = path.join(bildPfad, req.params.psnr + filename + path.extname(req.file.originalname));
+            const webPImagePath = path.join(bildPfad, req.params.psnr + filename + '.webp');
             await convertToWebP(imagePath, webPImagePath);
+            console.log("webPImagePath: " + webPImagePath);
 
-            // Erfolgsmeldung zurückgeben
-            console.log('Bild erfolgreich hochgeladen und in WebP konvertiert:', webPImagePath);
-            res.status(200).send('Bild erfolgreich hochgeladen und in WebP konvertiert');
+            const imagePathDb = req.params.psnr + filename;
+            console.log("imagePathDb: " + imagePathDb);
+
+            const result = await db.collection('employees').updateOne(
+                { psnr: parsedPsnr }, {
+                $set: {
+                    profilepicture: imagePathDb,
+                    editeddate: new Date
+                }
+            });
+            console.log("Result: " + JSON.stringify(result));
+            if (result.acknowledged && result.modifiedCount > 0) {
+                res.status(200).send();
+            }
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.error('Fehler beim Hochladen des Bildes:', error);
         res.status(500).send('Interner Serverfehler');
     }
