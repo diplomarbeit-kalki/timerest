@@ -194,12 +194,20 @@ export async function postTimerecordWithTag(req: any, res: any) {
         const { db, webSocketConnections } = req.app;
         const { tag, date, timestamp } = req.body;
 
-        const [day, month, year] = date.split("-");
-        const [hours, minutes, seconds] = timestamp.split(":");
-
+        console.log("Request Body: " + JSON.stringify(req.bofy));
         if (!tag) {
             return res.status(400).json({ message: 'Tag is required' });
         }
+        if (!date) {
+            return res.status(400).json({ message: 'Date is required' });
+        }
+        if (!timestamp) {
+            return res.status(400).json({ message: 'Timestamp is required' });
+        }
+
+        const [day, month, year] = date.split("-");
+        const [hours, minutes, seconds] = timestamp.split(":");
+
         if (!hours) {
             return res.status(400).json({ message: 'Timestamp format wrong' });
         }
