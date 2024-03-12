@@ -1,10 +1,10 @@
 import { getTimerecords, getTimerecordById, getTimerecordByPsnrAndDate, getTimerecordsByPsnrAndPeriod } from "../controllers/timerecords/getTimerecords";
-import { postTimerecord } from "../controllers/timerecords/postTimerecords";
-import { putTimerecordTimestamp} from "../controllers/timerecords/putTimerecords";
-import { deleteTimerecordTimestamp} from "../controllers/timerecords/deleteTimerecords";
+import { postTimerecordWithPsnr, postTimerecordWithTag } from "../controllers/timerecords/postTimerecords";
+import { putTimerecordTimestamp } from "../controllers/timerecords/putTimerecords";
+import { deleteTimerecordTimestamp } from "../controllers/timerecords/deleteTimerecords";
 
 //Initialisierung
-const express  = require('express');
+const express = require('express');
 const router = express.Router();
 console.log('Erstelle Routen: /timerecords');
 
@@ -21,6 +21,7 @@ router.put('/stamps', putTimerecordTimestamp); //IN VERWENDUNG
 router.delete('/stamps', deleteTimerecordTimestamp); //IN VERWENDUNG
 
 //POST-Routen
-router.post('/', postTimerecord);
+router.post('/withPsnr', postTimerecordWithPsnr);
+router.post('/withTag', postTimerecordWithTag);
 
 module.exports = router;
