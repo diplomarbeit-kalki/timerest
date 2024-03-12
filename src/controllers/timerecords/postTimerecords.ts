@@ -194,7 +194,7 @@ export async function postTimerecordWithTag(req: any, res: any) {
         const { db, webSocketConnections } = req.app;
         const { tag, date, timestamp } = req.body;
 
-        console.log("Request Body: " + JSON.stringify(req.bofy));
+        console.log("Request Body: " + JSON.stringify(req.body));
         if (!tag) {
             return res.status(400).json({ message: 'Tag is required' });
         }
@@ -236,23 +236,21 @@ export async function postTimerecordWithTag(req: any, res: any) {
                     throw new Error('Tag löschen Fehlgeschlagen!');
                 }
             }
+            const resultInsert = await db.collection('transponders').insertOne(
+                {
+                    uid: tag,
+                    createddate: new Date()
+                });
+            if (resultInsert.acknowledged) {
+                webSocketConnections.forEach((ws) => {
+                    ws.send(JSON.stringify({ message: `Transponder registriert!` }));
+                    console.log("websocket---Transponder registriert!---gesendet");
+                });
+                res.status(201).json(`Transponder registriert`);
+                return;
+            }
             else {
-                const resultInsert = await db.collection('transponders').insertOne(
-                    {
-                        uid: tag,
-                        createddate: new Date()
-                    });
-                if (resultInsert.acknowledged) {
-                    webSocketConnections.forEach((ws) => {
-                        ws.send(JSON.stringify({ message: `Transponder registriert!` }));
-                        console.log("websocket---Transponder registriert!---gesendet");
-                    });
-                    res.status(201).json(`Transponder registriert`);
-                    return;
-                }
-                else {
-                    throw new Error('Tag einfügen Fehlgeschlagen!');
-                }
+                throw new Error('Tag einfügen Fehlgeschlagen!');
             }
         }
 
