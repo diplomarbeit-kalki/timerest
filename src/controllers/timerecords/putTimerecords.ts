@@ -1,11 +1,11 @@
 import { ObjectId } from "mongodb";
 
 function calculateTimeDifference(time1: string, time2: string): number {
-    const [hours1, minutes1, seconds1] = time1.split(":").map(Number);
-    const [hours2, minutes2, seconds2] = time2.split(":").map(Number);
+    const [hours1, minutes1] = time1.split(":").map(Number);
+    const [hours2, minutes2] = time2.split(":").map(Number);
 
-    const totalMinutes1 = hours1 * 60 + minutes1 + seconds1 / 60;
-    const totalMinutes2 = hours2 * 60 + minutes2 + seconds2 / 60;
+    const totalMinutes1 = hours1 * 60 + minutes1;
+    const totalMinutes2 = hours2 * 60 + minutes2;
 
     return Math.abs(totalMinutes1 - totalMinutes2);
 }
