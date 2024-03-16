@@ -1,7 +1,6 @@
 import multer from 'multer';
 import path from 'path';
 import sharp from 'sharp';
-import fs from 'fs';
 
 const bildPfad = "public/profilepictures";
 const currentDate = new Date();
