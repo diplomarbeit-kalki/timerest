@@ -34,6 +34,7 @@ async function start() {
     app.use('/timerecords', require('./routes/timerecords'));
     app.use('/pdf', require('./routes/pdf'));
     app.use('/media', require('./routes/media'));
+    app.use('/cards', require('./routes/cards'));
 
     //Websocket
     wss.on('connection', (ws) => {
