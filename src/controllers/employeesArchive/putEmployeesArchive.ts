@@ -11,7 +11,9 @@ export async function putEmployeeIntoArchive(req: any, res: any) {
             return res.status(400).json({ message: 'Id is required' });
         }
 
-        const employee = await db.collection('employees').findOne({ _id: parsedId });
+
+        var employee = await db.collection('employees').findOne({ _id: parsedId });
+        employee.tag = null;
         const result = await db.collection('employeesArchive').insertOne(employee);
         const resultdel = await db.collection('employees').deleteOne({ _id: parsedId });
         if (result.acknowledged && resultdel.acknowledged) {
