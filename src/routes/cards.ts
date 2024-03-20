@@ -1,4 +1,4 @@
-import { getCountEmployeesWithoutTag, getCountTransponders, getWorkingEmployeesCountFromActualMonth, getAverageWorkinghoursFromActualMonth } from "../controllers/cards/getCards";
+import { getCountEmployeesWithoutTag, getCountTransponders, getWorkingEmployeesCountFromActualMonth, getAverageWorkinghoursFromActualMonth, getCountWorkingEmployees } from "../controllers/cards/getCards";
 
 
 //Initialisierung
@@ -8,6 +8,7 @@ console.log('Erstelle Routen: /cards');
 
 //GET-Routen
 router.get('/countEmployeesWithoutTag', getCountEmployeesWithoutTag);
+router.get('/countWorkingEmployees', getCountWorkingEmployees);
 router.get('/countTransponders', getCountTransponders);
 router.get('/workingEmployeesCountFromActualMonth', getWorkingEmployeesCountFromActualMonth);
 router.get('/averageWorkinghoursFromActualMonth', getAverageWorkinghoursFromActualMonth);

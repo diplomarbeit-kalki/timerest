@@ -45,6 +45,26 @@ export async function getCountTransponders(req: any, res: any) {
     }
 }
 
+export async function getCountWorkingEmployees(req: any, res: any) {
+    try {
+        const { db } = req.app;
+        const date = new Date();
+
+        const day = date.getDate();
+        const parsedDay = day.toString().padStart(2, '0');
+        const month = date.getMonth() + 1;
+        const parsedMonth = month.toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const cureentDate = `${parsedDay}-${parsedMonth}-${year}`;
+
+        const result = await db.collection('timerecords').find({date: cureentDate}).toArray();
+        res.status(200).json(result.length);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.toString() });
+    }
+}
+
 export async function getWorkingEmployeesCountFromActualMonth(req: any, res: any) {
     try {
         const { db } = req.app;
