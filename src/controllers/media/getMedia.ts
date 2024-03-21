@@ -12,7 +12,7 @@ export async function getProfilepictureByPsnr(req: any, res: any) {
 
     try {
         const result = await db.collection('employees').findOne({ psnr: parsedPsnr });
-        const altBildPfad = path.join(__dirname, `../../../public/profilepictures/placeholder.webp`);
+        const altBildPfad = path.join(__dirname, `../../../images/profilepictures/placeholder.webp`);
 
         if (!result) {
             if (psnr === "placeholder") {
@@ -26,7 +26,7 @@ export async function getProfilepictureByPsnr(req: any, res: any) {
 
         // Überprüfe, ob die Bilddatei existiert
 
-        const bildPfad = path.join(__dirname, `../../../public/profilepictures/${result.profilepicture}.webp`);
+        const bildPfad = path.join(__dirname, `../../../images/profilepictures/${result.profilepicture}.webp`);
        
 
         fs.exists(bildPfad, exists => {
@@ -54,7 +54,7 @@ export async function getProfilepictureByPsnrArchived(req: any, res: any) {
 
     try {
         const result = await db.collection('employeesArchive').findOne({ psnr: parsedPsnr });
-        const altBildPfad = path.join(__dirname, `../../../public/profilepictures/placeholder.webp`);
+        const altBildPfad = path.join(__dirname, `../../../images/profilepictures/placeholder.webp`);
 
         if (!result) {
             if (psnr === "placeholder") {
@@ -68,7 +68,7 @@ export async function getProfilepictureByPsnrArchived(req: any, res: any) {
 
         // Überprüfe, ob die Bilddatei existiert
 
-        const bildPfad = path.join(__dirname, `../../../public/profilepictures/${result.profilepicture}.webp`);
+        const bildPfad = path.join(__dirname, `../../../images/profilepictures/${result.profilepicture}.webp`);
        
 
         fs.exists(bildPfad, exists => {

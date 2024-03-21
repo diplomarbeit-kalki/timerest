@@ -2,7 +2,7 @@ import multer from 'multer';
 import path from 'path';
 import sharp from 'sharp';
 
-const bildPfad = "public/profilepictures";
+const bildPfad = "images/profilepictures";
 const currentDate = new Date();
 const date = `${currentDate.getDate().toString().padStart(2, '0')}${(currentDate.getMonth()).toString().padStart(2, '0') + 1}${currentDate.getFullYear()}`;
 const time = `${currentDate.getHours().toString().padStart(2, '0')}${currentDate.getMinutes().toString().padStart(2, '0')}${currentDate.getSeconds().toString().padStart(2, '0')}`;;
