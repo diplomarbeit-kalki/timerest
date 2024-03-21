@@ -42,7 +42,7 @@ export async function getEmployeeById(req: any, res: any) {
 export async function getEmployeeByPsnr(req: any, res: any) {
   try {
     const { db } = req.app;
-    const { psnr } = req.query;
+    const { psnr } = req.params;
 
     if (!psnr) {
       return res.status(400).json({ message: 'Employee psnr is required' });

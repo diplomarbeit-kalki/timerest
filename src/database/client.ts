@@ -7,7 +7,7 @@ class DatabaseClient {
 
     constructor() {
         this.client = new MongoClient("mongodb+srv://user:GdIqBoLUDsYfRQIc@cluster0.3swcs5d.mongodb.net/");
-        this.database = undefined; // Initialize to undefined, as it will be set during connection
+        this.database = undefined;
         this.dbName = "kalki";
     }
 

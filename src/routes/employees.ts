@@ -11,27 +11,27 @@ console.log('Erstelle Routen: /employees');
 
 //GET-Routen
 router.get('/', getEmployees);
-router.get('/byId/:id', getEmployeeById); //IN VERWENDUNG
+router.get('/byId/:id', getEmployeeById);
 router.get('/byPsnr/:psnr', getEmployeeByPsnr);
 router.get('/byUsername', getEmployeesByUsername);
 router.get('/byFirstname', getEmployeesByFirstname);
 router.get('/byLastname', getEmployeesByLastname);
-router.get('/nextFreePsnr', getNextFreePsnr); //IN VERWENDUNG
-router.get('/filtered', getEmployeesFiltered); //IN VERWENDUNG
-router.get('/withoutTransponder', getEmployeesWithoutTransponder); //IN VERWENDUNG
-router.get('/withoutTransponder/filtered', getEmployeesWithoutTransponderFiltered); //IN VERWENDUNG
+router.get('/nextFreePsnr', getNextFreePsnr);
+router.get('/filtered', getEmployeesFiltered);
+router.get('/withoutTransponder', getEmployeesWithoutTransponder);
+router.get('/withoutTransponder/filtered', getEmployeesWithoutTransponderFiltered);
 
 //POST-Routen
-router.post('/', postEmployee); //IN VERWENDUNG
+router.post('/', postEmployee);
 
 //PUT-Routen
-router.put('/withId/:id', putEmployeeWithId); //IN VERWENDUNG
-router.put('/fromArchive/withId/:id', putEmployeeFromArchive); //IN VERWENDUNG
+router.put('/withId/:id', putEmployeeWithId);
+router.put('/fromArchive/withId/:id', putEmployeeFromArchive);
 //PUT-Route für Tag
-router.put('/withPsnr/:psnr', putEmployeeWithPsnr); //IN VERWENDUNG
+router.put('/withPsnr/:psnr', putEmployeeWithPsnr);
 
 //DELETE-Routen
-router.delete('/withId/:id', deleteEmployeeWithId); //IN VERWENDUNG
-router.delete('/tag/withId/:id', deleteTagFromEmpoyeeWithId); //IN VERWENDUNG
+router.delete('/withId/:id', deleteEmployeeWithId);
+router.delete('/tag/withId/:id', deleteTagFromEmpoyeeWithId);
 
 module.exports = router;
